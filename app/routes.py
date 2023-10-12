@@ -1,11 +1,18 @@
 from flask import jsonify, request
 from app import app, db
 from app.models import Hero, Power, HeroPower
+
+# GET /heroes route
+@app.route('/')
+def index():
+    return '<h1><span style="color:green">MY HEROES</span><span style="color:orangered"> HOMEPAGE</span> \tLOADING.....</h1>'
+
 @app.route('/heroes', methods=['GET'])
 def get_heroes():
     heroes = Hero.query.all()
     hero_list = [{'id': hero.id, 'name': hero.name, 'super_name': hero.super_name} for hero in heroes]
     return jsonify(hero_list)
+
 @app.route('/heroes/<int:id>', methods=['GET'])
 def get_hero(id):
     hero = Hero.query.get(id)
@@ -19,11 +26,13 @@ def get_hero(id):
         return jsonify(hero_data)
     else:
         return jsonify({'error': 'Hero not found'}), 404
+
 @app.route('/powers', methods=['GET'])
 def get_powers():
     powers = Power.query.all()
     power_list = [{'id': power.id, 'name': power.name, 'description': power.description} for power in powers]
     return jsonify(power_list)
+
 @app.route('/powers/<int:id>', methods=['GET'])
 def get_power(id):
     power = Power.query.get(id)
@@ -36,6 +45,7 @@ def get_power(id):
         return jsonify(power_data)
     else:
         return jsonify({'error': 'Power not found'}), 404
+
 @app.route('/powers/<int:id>', methods=['PATCH'])
 def update_power(id):
     power = Power.query.get(id)
@@ -58,7 +68,6 @@ def update_power(id):
     else:
         return jsonify({'errors': ['Invalid request']}), 400
 
-# POST /hero_powers route
 @app.route('/hero_powers', methods=['POST'])
 def create_hero_power():
     data = request.get_json()
@@ -86,7 +95,6 @@ def create_hero_power():
     else:
         return jsonify({'errors': ['Invalid request']}), 400
 
-# PATCH /heroes/:id route
 @app.route('/heroes/<int:id>', methods=['PATCH'])
 def update_hero(id):
     hero = Hero.query.get(id)
@@ -105,7 +113,6 @@ def update_hero(id):
         'super_name': hero.super_name
     })
 
-# DELETE /heroes/:id route
 @app.route('/heroes/<int:id>', methods=['DELETE'])
 def delete_hero(id):
     hero = Hero.query.get(id)
@@ -115,6 +122,7 @@ def delete_hero(id):
     db.session.delete(hero)
     db.session.commit()
     return jsonify({'message': 'Hero deleted successfully'})
+
 @app.route('/powers', methods=['POST'])
 def create_power():
     data = request.get_json()
